@@ -7,18 +7,30 @@ export const metricsController = express.Router();
 
 const metricsService: MetricsService = new MetricsService();
 
-metricsController.get("/coin-metrics", async(_request: Request, response: Response) => {
-  let metricsResponse: IAssets | undefined;
+metricsController.get("/assets", async(_request: Request, response: Response) => {
+  let outputResponse: IAssets | undefined = await metricsService.getAssets();
 
   try {
-    metricsResponse = await metricsService.getCoinMetrics();
+    outputResponse = await metricsService.getAssets();
   } catch (error) {
     if (axios.isAxiosError(error))  {
       response.status(404).json({ message: error.message });
     }
-
-    response.status(404).json({ message: "Unknown endpoint" });
   }
 
-  response.status(200).json(metricsResponse);
+  response.status(200).json(outputResponse);
+});
+
+metricsController.get("/assets/:slug", async(request: Request, response: Response) => {
+  let outputResponse: IAssets | undefined;
+
+  try {
+    outputResponse = await metricsService.getAssetsBySlug(request.params.slug);
+  } catch (error) {
+    if (axios.isAxiosError(error))  {
+      response.status(404).json({ message: error.message });
+    }
+  }
+
+  response.status(200).json(outputResponse);
 });

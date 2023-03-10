@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import cors from "cors";
 import helmet from "helmet";
 import middleware from "./utils/middleware";
@@ -15,6 +15,13 @@ app.use(
     crossOriginEmbedderPolicy: false,
   }),
 );
+
+app.use((_request: Request, response: Response, next) => {
+  response.header('Access-Control-Allow-Origin', '*');
+  response.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
+  response.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+  next();
+});
 
 if (NODE_ENV === "production") {
   app.get("*", (_req, res) => {
